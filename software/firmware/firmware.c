@@ -61,6 +61,11 @@ int compare_str(char *str1, char *str2, int str_size) {
 }
 
 int main()
+
+
+
+
+  
 {
   //init uart
   uart_init(UART_BASE,FREQ/BAUD);
