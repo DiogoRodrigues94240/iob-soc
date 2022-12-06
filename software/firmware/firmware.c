@@ -64,16 +64,21 @@ int main()
 {
   //init uart
   uart_init(UART_BASE,FREQ/BAUD);
-
-  /*//test puts
-  uart_puts("\n\n\nHello world!\n\n\n");
-
-  //test printf with floats 
-  printf("Value of Pi = %f\n\n", 3.1415);*/
+  
+  //init gpio
+  gpio_init(GPIO_BASE);
+  
+  //test puts
+  uart_puts("\n\n\nHello world!");
   
   //test the first 100 numbers of febonacci sequence  
   calculate_fibonacci_sequence(20);
   printf("\n\n\n fibonacci sequence: %s\n\n\n", charfibonacci);
+
+  //set gpio and read
+  gpio_set_output_enable(3);
+  gpio_set(3);
+  gpio_get();
   
   //test file send
   char *sendfile = malloc(1000);
