@@ -1,6 +1,7 @@
 #include "system.h"
 #include "periphs.h"
 #include "iob-uart.h"
+#include "iob-gpio.h"
 #include "printf.h"
 
 int fibonacci[100];
