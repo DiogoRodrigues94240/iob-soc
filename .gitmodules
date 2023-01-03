@@ -22,3 +22,6 @@
 [submodule "submodules/GPIO"]
 	path = submodules/GPIO
 	url = https://github.com/IObundle/iob-gpio.git
+[submodule "submodules/TIMER"]
+	path = submodules/TIMER
+	url = git@github.com:DiogoRodrigues94240/iob-timer.git
