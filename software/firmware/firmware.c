@@ -5,22 +5,27 @@
 #include "printf.h"
 #include "iob-timer.h"
 
-float pwm_timepoint_array[10] =  {0.5, 0.79, 0.98, 0.98, 0.79, 0.5, 0.21, 0.02, 0.02, 0.21};
-unsigned int freq = 10000, period, t_total;
-int numero_de_pontos_t_on = 0;
+unsigned int pwm_timepoint_array[10] =  {50, 79, 98, 98, 79, 5, 21, 2, 2, 21};
+unsigned int pwn_ton[10];
+unsigned int freq = 100, freq_buffer, period, t_total;
+int numero_de_pontos_t_on = 10, i, k, l;
 
-void pwm_gen(unsigned int freq)
+void pwm_gen()
 {
-  numero_de_pontos_t_on = 0;
-  while(numero_t_on <= 10)
+  i = 1;
+  while(i < numero_de_pontos_t_on)
     {
-      gpio_set(0);
       timer_reset();
-      while(timer_time_us() <= (t_total * pwm_timepoint_array[numero_de_pontos_t_on]));
       gpio_set(1);
-      numero_de_pontos_t_on++;
+      while(timer_time_us() <= pwn_ton[i]);
+      k = timer_time_us(); 
+      printf("Ton[%d]: %d -> %d\n", i, pwn_ton[i], k);
+      gpio_set(0);
+      while(timer_time_us() <= t_total);
+      l = timer_time_us();
+      printf("Toff[%d]: %d -> %d\n", i, (t_total - pwn_ton[i]), (l-k));
+      i++;
     }
-
   return;
 }
 
@@ -36,14 +41,7 @@ int main()
   timer_init(TIMER_BASE);
   
   //test puts
-  uart_puts("\n\n\nHello world!");
-
-  //read current timer count, compute elapsed time
-  elapsed  = timer_get_count();
-  elapsedu = timer_time_us();
-
-  printf("\nExecution time: %d clock cycles\n", (unsigned int) elapsed);
-  printf("\nExecution time: %dus @%dMHz\n\n", elapsedu, FREQ/1000000);
+  uart_puts("\n\n\nHello world!\n");
 
   //set gpio and read
   gpio_set_output_enable(3);
@@ -51,13 +49,38 @@ int main()
   gpio_get();
 
   //ler_interruptor; codigo por fazer
-  period = (1*1000000)/freq; // exemplo: frequencia = 1kHz -> periodo = 1 ms. Vamos fazer a sinosoide com 10 pontos, logo o t_total = periodo/10 = 0.1 ms = 100 us.
+  uint32_t recorrencia_da_leitura = 100, j = 0, k, l;
+  //freq = gpio_get();
+  freq_buffer = freq;
+  period = 1000000/freq; // exemplo: frequencia = 1kHz -> periodo = 1 ms. Vamos fazer a sinosoide com 10 pontos, logo o t_total = periodo/10 = 0.1 ms = 100 us.
   t_total = period/10;
-  
-  while(1)
+  printf("frequencia: %d, periodo: %d, t_total: %d\n", freq, period, t_total);
+  for (j = 0; j < numero_de_pontos_t_on; j++)
     {
-      pwm_gen(leitura_dos_interruptores);
-    }  
+      pwn_ton[j] = ((t_total * pwm_timepoint_array[j])/100);
+      printf("ton[%d] = %d\n", j, pwn_ton[j]);
+    }
+       
+  //Entrar no loop infinito de dor e tortura sonora
+  printf("inicio pwm \n");
+  j = 0;
+  while(j<=0)
+    {
+      if(j == recorrencia_da_leitura){
+	//freq = gpio_get();
+	//i = 0;
+	if (freq != freq_buffer){
+	  freq_buffer = freq;
+	  period = (1*1000000)/freq;
+	  t_total = period/10;
+	}
+      }
+      pwm_gen();
+      j++;
+    }
+
+  printf("fim do programa \n");
+
   uart_finish();
 }
 
